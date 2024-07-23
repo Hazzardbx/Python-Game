@@ -2,15 +2,15 @@ import pygame
 from pygame.locals import K_ESCAPE
 from sys import exit
 
-# Inicialização do Pygame
+# Initialize Pygame
 pygame.init()
 
-# Inserir música
+# Insert music
 pygame.mixer.init()
 pygame.mixer.music.load('super.mp3')
 pygame.mixer.music.play(-1)
 
-# Dicionário para armazenar os tipos de lixo e as imagens correspondentes
+# Library to store the types of trash and their corresponding 
 lixo_dict = {
     "lata": pygame.transform.scale(pygame.image.load('graphics/lata.png'), (60, 70)),
     "lata1": pygame.transform.scale(pygame.image.load('graphics/lata1.png'), (60, 70)),
@@ -25,15 +25,15 @@ lixo_dict = {
     "papel2": pygame.transform.scale(pygame.image.load('graphics/papel2.png'), (70, 60)),
 }
 
-# Configuração da janela do jogo
+# Game config window
 screen = pygame.display.set_mode((1620, 1080))
 pygame.display.set_caption('Trash_Trak')
 clock = pygame.time.Clock()
 
-# Definindo uma fonte
+# Defining font
 main_font = pygame.font.Font('font/SuperMario256.ttf', 30)
 
-# Carregamento das imagens e definição dos objetos
+#  Loading images and objects definitions
 bk_surface = pygame.image.load('graphics/bk.png')
 icon = pygame.image.load('graphics/1.png')
 text_surface = main_font.render('Find the hidden garbage', False, 'Brown')
@@ -43,7 +43,7 @@ mario_original = mario_surface  # Armazena a imagem original
 mario_rect = mario_surface.get_rect(topleft=(700, 500))
 initial_mario_position = (700, 500)
 
-# Lista para armazenar as imagens do lixo e suas posições
+# List to store "trash" pictures and their positions
 images_and_rects = [
     (lixo_dict["lata"], (550, 700)),
     (lixo_dict["lata1"], (200, 650)),
@@ -58,34 +58,34 @@ images_and_rects = [
     (lixo_dict["papel2"], (1300, 900))
 ]
 
-# Definindo uma fonte para a contagem regressiva
+# Defining font for "countdown"
 countdown_font = pygame.font.Font('font/SuperMario256.ttf', 100)
 
-# Definindo o tempo inicial para a contagem regressiva
-countdown_time = 3  # 3 segundos
+# Definining starting point(time) for countdown
+countdown_time = 3  # 3 secs
 
 # Loop de contagem regressiva
 while countdown_time > 0:
-    screen.fill((0, 0, 0))  # Preenche a tela com a cor preta
+    screen.fill((0, 0, 0))  # Fills screen with black color
 
-    # Renderiza o texto da contagem regressiva
+    # Render countdown text
     countdown_surface = countdown_font.render(str(countdown_time), False, 'White')
     screen.blit(countdown_surface, (800, 500))
 
     pygame.display.update()
-    pygame.time.delay(1000)  # Aguarda 1 segundo
+    pygame.time.delay(1000)  # Holds 1second
     countdown_time -= 1
     
-# Variáveis para contar a quantidade de lixo apanhado
+# Variable to count acquired trash number
 lixo_apanhado = 0
 
-# Variável para armazenar a pontuação
+# Variable for the score
 score = 0
 
-# Variável para a pontuação máxima
+# Variable for maximum score
 pontuacao_maxima = 11
 
-# Defina uma velocidade inicial
+# Define starting velocity
 speed = 100
 
 while True:
@@ -96,33 +96,33 @@ while True:
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 mario_rect.x -= speed
-                # Inverte a imagem quando movendo para a esquerda
+                # Inverts image when moving left
                 mario_surface = pygame.transform.flip(mario_original, True, False)
             elif event.key == pygame.K_RIGHT:
                 mario_rect.x += speed
-                # Restaura a imagem original quando movendo para a direita
+                # Restores image to default (right) when moving back to the right side
                 mario_surface = mario_original
             elif event.key == pygame.K_UP:
                 mario_rect.y -= speed
             elif event.key == pygame.K_DOWN:
                 mario_rect.y += speed
                 
-            elif event.key == K_ESCAPE:  # Adicione esta verificação
+            elif event.key == K_ESCAPE: 
                 pygame.quit()
                 exit()
- # Verifica se a pontuação atingiu a pontuação máxima
+ # Checks if maximum score was reached
     if lixo_apanhado >= pontuacao_maxima:
-        # Exibe a mensagem final
+        # Shows ending message
         final_surface = main_font.render("It's all clean!", False, 'Brown')
         screen.blit(final_surface, (580, 350))
 
-        # Aguarda a entrada do jogador para reiniciar o jogo
+        # Awaits player "trigger" to start game again
         restart_surface = main_font.render("Press (R) to start again", False, 'White')
         screen.blit(restart_surface, (500, 500))
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_r]:
-            # Reinicia as variáveis
+            # Restarts variables
             lixo_apanhado = 0
             score = 0
             mario_rect.topleft = initial_mario_position
@@ -141,11 +141,11 @@ while True:
     (lixo_dict["papel2"], (1300, 900))
 ]
 
-    # Garante que o Mario permanece dentro dos limites da tela
+    # Sets limit for the character not to go through the window's limits
     mario_rect.x = max(0, min(mario_rect.x, 1620 - mario_rect.width))
     mario_rect.y = max(0, min(mario_rect.y, 1080 - mario_rect.height))
 
-  # Verifica a colisão com o lixo e atualiza a pontuação
+  # Checks colision with trash to update score
     for i, (image, position) in enumerate(images_and_rects):
         trash_rect = pygame.Rect(position, image.get_size())
         if mario_rect.colliderect(trash_rect) and lixo_apanhado <= len(images_and_rects):
@@ -155,7 +155,7 @@ while True:
             print(f"Score: {score}")
             images_and_rects[i] = (image, (-1000, -1000)) # Move o lixo fora da tela
 
-    # Atualização da tela do jogo
+    # Refreshes game window
     clock.tick(60)
     screen.blit(bk_surface, (0, 0))
     screen.blit(text_surface, (600, 200))
@@ -163,19 +163,19 @@ while True:
     score_surface = main_font.render(f"Score: {score}/{pontuacao_maxima}", False, 'White')
     screen.blit(score_surface, (10, 10))
 
-    # Desenha as imagens do lixo
+    # Draws trash images
     for image, position in images_and_rects:
         rect = image.get_rect(topleft=position)
         screen.blit(image, rect.topleft)
 
-    # Desenha o personagem principal
+    # Draws main character
     screen.blit(mario_surface, mario_rect.topleft)
     
     
 
-     # Verifica se a pontuação atingiu a pontuação máxima
+     # Checks if maximum score was reached
     if lixo_apanhado >= pontuacao_maxima:
-        # Exibe a mensagem final
+        # Shows end game message
         
         final_surface = main_font.render("Press (R) to start again/ to exit (ESC)", False, 'Brown')
         screen.blit(final_surface, (500, 350))
